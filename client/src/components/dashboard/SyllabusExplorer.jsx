@@ -4,6 +4,7 @@ import { ChevronRight, Loader2, FileText, Zap, BrainCircuit, ArrowLeft, BookOpen
 import { useAuthStore } from '../../store/useAuthStore';
 
 const SyllabusExplorer = () => {
+  const targetExam = useAuthStore(state => state.user)?.academicProfile?.targetExam || '';
   const [syllabus, setSyllabus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -134,7 +135,6 @@ const SyllabusExplorer = () => {
   // Topic Info View (Deepest level)
   if (selectedTopic) {
     const isCompleted = completedTopicsLocal.includes(selectedTopic);
-    const targetExam = useAuthStore(state => state.user)?.academicProfile?.targetExam || '';
     
     return (
       <div>
@@ -200,7 +200,6 @@ const SyllabusExplorer = () => {
 
   // Subject Details View (Topics List)
   if (selectedSubject) {
-    const targetExam = useAuthStore(state => state.user)?.academicProfile?.targetExam || '';
     return (
       <div>
         <button onClick={() => setSelectedSubject(null)} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 font-semibold">

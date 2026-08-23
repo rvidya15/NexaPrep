@@ -16,9 +16,11 @@ NexaPrep AI is an all-in-one AI study companion that turns any syllabus into int
 - 🧠 **Smart Flashcards (Spaced Repetition):** Tinder-style swipeable flashcards utilizing active recall and spaced repetition to help you memorize 4x faster.
 - 🗺️ **Magic Revision Sheets:** Instantly generate visual mind-maps and high-yield flashcards for any topic using our advanced AI engine.
 - 🖨️ **Magic Sheet Export:** One-click PDF export functionality for your AI-generated mindmaps and revision notes.
+- 📄 **"Chat with your PDF" (RAG Pipeline):** Upload your textbooks or past papers. The AI extracts the text and allows you to chat dynamically with your own documents.
 - 🎧 **Focus Zone:** Immerse yourself with built-in Pomodoro timers and Lofi beats. Stay in the zone with zero distractions.
 - 🤖 **Socratic AI Voice Tutor:** A floating 24/7 tutor with native Text-to-Speech (TTS) that guides you to the answer instead of just spoon-feeding it.
 - 📈 **Master Syllabus:** Track your completion percentage across your entire syllabus with automated progress bars and AI-curated notes.
+- 📊 **GitHub-Style Study Heatmap:** A beautiful, responsive data visualization component that tracks your daily study consistency over the entire year.
 - 📺 **Native YouTube Integration:** AI dynamically embeds highly targeted full-course playlists and one-shot lecture search links directly inside your syllabus topics.
 - 💳 **Token Economy System:** A robust backend middleware that assigns dynamic token costs to different AI tasks, integrated with a Stripe-ready checkout system for seamless monetization.
 

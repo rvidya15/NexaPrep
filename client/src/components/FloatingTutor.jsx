@@ -9,6 +9,22 @@ const FloatingTutor = () => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+
+  const speak = (text) => {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    const cleanText = text.replace(/\[ACTION_ITEM\].*/g, '').replace(/[\*\#]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.1;
+    // Try to find a female English voice
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Google UK English Female') || v.name.includes('Samantha'));
+    if (femaleVoice) utterance.voice = femaleVoice;
+    
+    window.speechSynthesis.cancel(); // Stop current
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handleSend = async () => {
     if(!input.trim()) return;
@@ -22,15 +38,13 @@ const FloatingTutor = () => {
       const api = (await import('../api/axiosConfig')).default;
       const res = await api.post('/ai/tutor', { query: userMsg });
       
-      setMessages([...newMsgs, { 
-        role: 'ai', 
-        content: res.data.reply
-      }]);
+      const reply = res.data.reply;
+      setMessages([...newMsgs, { role: 'ai', content: reply }]);
+      speak(reply);
     } catch (err) {
-      setMessages([...newMsgs, { 
-        role: 'ai', 
-        content: err.response?.status === 402 ? "You're out of tokens! Please buy more." : "Sorry, I couldn't connect to my neural net. Check your API settings."
-      }]);
+      const errReply = err.response?.status === 402 ? "You're out of tokens! Please buy more." : "Sorry, I couldn't connect to my neural net. Check your API settings.";
+      setMessages([...newMsgs, { role: 'ai', content: errReply }]);
+      speak(errReply);
     } finally {
       setIsLoading(false);
     }
@@ -47,14 +61,26 @@ const FloatingTutor = () => {
             className="w-[350px] sm:w-[500px] h-[600px] mb-4  bg-white/95 backdrop-blur-xl border  border-indigo-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="p-4 border-b  border-indigo-100 flex items-center justify-between  bg-indigo-50/50">
+            <div className="p-4 border-b border-indigo-100 flex items-center justify-between bg-indigo-50/50">
               <div className="flex items-center gap-3">
                 <Bot className="text-indigo-600 w-5 h-5" />
-                <h3 className="font-bold text-sm  text-gray-800">NexaPrep Guide</h3>
+                <h3 className="font-bold text-sm text-gray-800">NexaPrep Guide</h3>
               </div>
-              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-red-500 transition">
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => {
+                    setVoiceEnabled(!voiceEnabled);
+                    if (voiceEnabled) window.speechSynthesis.cancel();
+                  }} 
+                  className={`text-xs font-bold px-2 py-1 rounded border transition ${voiceEnabled ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-gray-100 text-gray-400 border-gray-200'}`}
+                  title={voiceEnabled ? "Voice Enabled" : "Voice Disabled"}
+                >
+                  {voiceEnabled ? '🔊 Voice On' : '🔇 Muted'}
+                </button>
+                <button onClick={() => { setIsOpen(false); window.speechSynthesis.cancel(); }} className="text-gray-400 hover:text-red-500 transition">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Chat Area */}

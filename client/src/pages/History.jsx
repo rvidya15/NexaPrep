@@ -7,10 +7,24 @@ const History = () => {
   const user = useAuthStore(state => state.user);
 
   // Mock data for history timeline (would come from user profile in a real app)
+  const targetExam = user?.academicProfile?.targetExam?.toLowerCase() || '';
+  let topic1 = 'Fundamental Rights';
+  let topic2 = 'Indian Geography';
+  if (targetExam.includes('neet')) {
+    topic1 = 'Human Anatomy';
+    topic2 = 'Genetics';
+  } else if (targetExam.includes('jee')) {
+    topic1 = 'Quantum Physics';
+    topic2 = 'Organic Chemistry';
+  } else if (targetExam.includes('ca') || targetExam.includes('chartered')) {
+    topic1 = 'Direct Tax';
+    topic2 = 'Auditing';
+  }
+
   const historyEvents = [
     { type: 'quiz', title: 'Weekly Quiz Completed', score: '85%', date: '2 days ago', icon: <Trophy className="w-5 h-5 text-yellow-500" /> },
-    { type: 'revision', title: 'Revised: Quantum Physics', score: 'Mastered', date: '3 days ago', icon: <CheckCircle2 className="w-5 h-5 text-green-500" /> },
-    { type: 'revision', title: 'Revised: Organic Chemistry', score: 'Needs Review', date: '5 days ago', icon: <Clock className="w-5 h-5 text-orange-500" /> },
+    { type: 'revision', title: `Revised: ${topic1}`, score: 'Mastered', date: '3 days ago', icon: <CheckCircle2 className="w-5 h-5 text-green-500" /> },
+    { type: 'revision', title: `Revised: ${topic2}`, score: 'Needs Review', date: '5 days ago', icon: <Clock className="w-5 h-5 text-orange-500" /> },
     { type: 'onboarding', title: 'NexaPrep Journey Started', score: 'Welcome!', date: '1 week ago', icon: <CheckCircle2 className="w-5 h-5 text-indigo-500" /> },
   ];
 

@@ -59,7 +59,7 @@ const WeeklyQuiz = () => {
             
             <div className="flex gap-4 max-w-md mx-auto">
               <input 
-                type="text" placeholder="e.g., Thermodynamics, World War 2" value={topic} onChange={(e) => setTopic(e.target.value)}
+                type="text" placeholder={`e.g., ${user?.academicProfile?.targetExam?.toLowerCase().includes('ca') ? 'Auditing, Income Tax' : user?.academicProfile?.targetExam?.toLowerCase().includes('neet') ? 'Thermodynamics, Human Anatomy' : 'Thermodynamics, World War 2'}`} value={topic} onChange={(e) => setTopic(e.target.value)}
                 className="flex-1 bg-slate-50 border border-indigo-200 rounded-lg px-4 py-3 focus:outline-none focus:border-neonCyan transition"
               />
               <button 

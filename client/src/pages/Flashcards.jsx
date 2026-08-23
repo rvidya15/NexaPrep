@@ -1,13 +1,39 @@
 import React, { useState } from 'react';
 import { BrainCircuit, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../store/useAuthStore';
 
 const Flashcards = () => {
-  const [cards, setCards] = useState([
+  const user = useAuthStore(state => state.user);
+  const targetExam = user?.academicProfile?.targetExam?.toLowerCase() || '';
+
+  let initialCards = [
     { id: 1, front: "What is the primary objective of the monetary policy of India?", back: "To maintain price stability while keeping in mind the objective of growth.", subject: "Economy" },
     { id: 2, front: "Explain the difference between Fundamental Rights and Directive Principles.", back: "Fundamental Rights are justiciable (enforceable by courts), while Directive Principles are non-justiciable guidelines for the state.", subject: "Polity" },
     { id: 3, front: "What was the main outcome of the Battle of Buxar (1764)?", back: "The British East India Company gained the Diwani rights (right to collect revenue) of Bengal, Bihar, and Orissa.", subject: "Modern History" }
-  ]);
+  ];
+
+  if (targetExam.includes('neet')) {
+    initialCards = [
+      { id: 1, front: "What is the function of the mitochondria?", back: "It generates most of the chemical energy needed to power the cell's biochemical reactions (powerhouse of the cell).", subject: "Biology" },
+      { id: 2, front: "Define standard enthalpy of formation.", back: "The enthalpy change when one mole of a compound is formed from its elements in their standard states.", subject: "Chemistry" },
+      { id: 3, front: "What is the SI unit of electric charge?", back: "Coulomb (C).", subject: "Physics" }
+    ];
+  } else if (targetExam.includes('jee')) {
+    initialCards = [
+      { id: 1, front: "What is the formula for the roots of a quadratic equation?", back: "x = [-b ± √(b² - 4ac)] / 2a", subject: "Mathematics" },
+      { id: 2, front: "State Heisenberg's Uncertainty Principle.", back: "It is impossible to determine simultaneously both the position and velocity of an electron with any great degree of accuracy or certainty.", subject: "Chemistry" },
+      { id: 3, front: "What is the moment of inertia of a solid sphere?", back: "(2/5)MR²", subject: "Physics" }
+    ];
+  } else if (targetExam.includes('ca') || targetExam.includes('chartered')) {
+    initialCards = [
+      { id: 1, front: "What is the accounting equation?", back: "Assets = Liabilities + Equity", subject: "Accounts" },
+      { id: 2, front: "What is a 'going concern' assumption?", back: "The assumption that an entity will remain in business for the foreseeable future.", subject: "Auditing" },
+      { id: 3, front: "What is the difference between direct and indirect tax?", back: "Direct tax is levied on income (e.g., Income Tax), while indirect tax is levied on goods/services (e.g., GST).", subject: "Taxation" }
+    ];
+  }
+
+  const [cards, setCards] = useState(initialCards);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 

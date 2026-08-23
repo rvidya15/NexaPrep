@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, Send, X, MessageSquare } from 'lucide-react';
+import { Bot, User, Send, X, MessageSquare, Paperclip, FileText, Loader2 } from 'lucide-react';
 
 const FloatingTutor = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +10,11 @@ const FloatingTutor = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  
+  // RAG / PDF Feature
+  const [pdfContext, setPdfContext] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const speak = (text) => {
     if (!('speechSynthesis' in window)) return;
@@ -21,6 +26,32 @@ const FloatingTutor = () => {
     
     // Use default OS voice for maximum compatibility
     window.speechSynthesis.speak(utterance);
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || file.type !== 'application/pdf') {
+      alert("Please upload a valid PDF file.");
+      return;
+    }
+    
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const api = (await import('../api/axiosConfig')).default;
+      const res = await api.post('/upload/pdf', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setPdfContext(res.data.text);
+      setMessages(prev => [...prev, { role: 'ai', content: `✅ I have successfully read the document "${file.name}". You can now ask me any questions about it!` }]);
+    } catch (err) {
+      alert("Failed to read PDF.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSend = async () => {
@@ -41,7 +72,10 @@ const FloatingTutor = () => {
     
     try {
       const api = (await import('../api/axiosConfig')).default;
-      const res = await api.post('/ai/tutor', { query: userMsg });
+      const res = await api.post('/ai/tutor', { 
+        query: userMsg,
+        context: pdfContext ? `[DOCUMENT CONTEXT:\n${pdfContext}\n]\n` : ''
+      });
       
       const reply = res.data.reply;
       setMessages([...newMsgs, { role: 'ai', content: reply }]);
@@ -123,18 +157,34 @@ const FloatingTutor = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-3  bg-white border-t  border-indigo-100 flex gap-2">
+            <div className="p-3 bg-white border-t border-indigo-100 flex gap-2 items-center relative">
+              <input 
+                type="file" 
+                accept="application/pdf"
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+                className="hidden" 
+              />
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                title="Upload PDF to Chat"
+                className="text-gray-400 hover:text-indigo-600 transition disabled:opacity-50"
+              >
+                {isUploading ? <Loader2 className="w-5 h-5 animate-spin text-indigo-600" /> : <Paperclip className="w-5 h-5" />}
+              </button>
               <input 
                 type="text" 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask me anything or paste a YouTube URL..." 
-                className="flex-1  bg-gray-50 border  border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#5a4bda] transition"
+                placeholder={pdfContext ? "Ask about your document..." : "Ask me anything..."}
+                className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#5a4bda] transition"
               />
               <button 
                 onClick={handleSend}
-                className="bg-[#5a4bda] text-white px-3 py-2 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md flex items-center justify-center"
+                disabled={isLoading}
+                className="bg-[#5a4bda] text-white px-3 py-2 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md flex items-center justify-center disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
               </button>

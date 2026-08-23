@@ -44,6 +44,8 @@ app.use('/api/stripe', stripeRoutes);
 const plannerRoutes = require('./routes/plannerRoutes');
 app.use('/api/planner', plannerRoutes);
 app.use('/api/notes', noteRoutes);
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/upload', uploadRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

@@ -39,11 +39,12 @@ const Dashboard = () => {
   // Generate dynamic placeholders based on targetExam
   const targetExam = user?.academicProfile?.targetExam || 'UPSC';
   
-  let aiPick = { title: "Modern History: Indian National Movement", desc: "Based on your recent tests, you need to review the events between 1905 and 1919." };
+  // Generic Fallback
+  let aiPick = { title: `${targetExam} Fundamentals`, desc: "Based on your recent tests, you need to review the core foundational concepts." };
   let scheduled = [
-    { name: "Fundamental Rights", subject: "Polity", due: "Due today", color: "bg-orange-400" },
-    { name: "Earthquake Waves", subject: "Geography", due: "Overdue", color: "bg-red-400" },
-    { name: "Photosynthesis", subject: "Biology", due: "Tomorrow", color: "bg-green-400" }
+    { name: "Core Concept 1", subject: "Paper 1", due: "Due today", color: "bg-orange-400" },
+    { name: "Advanced Applications", subject: "Paper 2", due: "Overdue", color: "bg-red-400" },
+    { name: "Revision Module", subject: "Paper 3", due: "Tomorrow", color: "bg-green-400" }
   ];
 
   if (targetExam.toLowerCase().includes('neet')) {
@@ -66,6 +67,20 @@ const Dashboard = () => {
       { name: "Electricity", subject: "Science", due: "Due today", color: "bg-orange-400" },
       { name: "Trigonometry", subject: "Mathematics", due: "Overdue", color: "bg-red-400" },
       { name: "Carbon Compounds", subject: "Science", due: "Tomorrow", color: "bg-green-400" }
+    ];
+  } else if (targetExam.toLowerCase().includes('upsc')) {
+    aiPick = { title: "Modern History: Indian National Movement", desc: "Based on your recent tests, you need to review the events between 1905 and 1919." };
+    scheduled = [
+      { name: "Fundamental Rights", subject: "Polity", due: "Due today", color: "bg-orange-400" },
+      { name: "Earthquake Waves", subject: "Geography", due: "Overdue", color: "bg-red-400" },
+      { name: "Photosynthesis", subject: "Biology", due: "Tomorrow", color: "bg-green-400" }
+    ];
+  } else if (targetExam.toLowerCase().includes('ca') || targetExam.toLowerCase().includes('chartered')) {
+    aiPick = { title: "Direct Tax Laws", desc: "Review the latest amendments in capital gains before the next mock exam." };
+    scheduled = [
+      { name: "Auditing Standards", subject: "Advanced Auditing", due: "Due today", color: "bg-orange-400" },
+      { name: "GST Input Tax Credit", subject: "Indirect Tax Laws", due: "Overdue", color: "bg-red-400" },
+      { name: "Consolidated Financial Statements", subject: "Financial Reporting", due: "Tomorrow", color: "bg-green-400" }
     ];
   }
 

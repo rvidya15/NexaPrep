@@ -15,10 +15,11 @@ const RevisionSheet = () => {
   const user = useAuthStore((state) => state.user);
   const targetExam = user?.academicProfile?.targetExam?.toLowerCase() || '';
   
-  let defaultTopic = 'Photosynthesis';
-  let defaultSyntax = `graph TD\n  A[Photosynthesis] --> B(Light Reactions)\n  A --> C(Calvin Cycle)\n  B --> D[ATP & NADPH]\n  C --> E[Glucose]`;
-  let defaultQ = 'What are the two main stages of Photosynthesis?';
-  let defaultA = 'Light-dependent reactions and the Calvin cycle (light-independent reactions).';
+  // Generic Fallback
+  let defaultTopic = `${user?.academicProfile?.targetExam || 'Core'} Fundamentals`;
+  let defaultSyntax = `graph TD\n  A[${user?.academicProfile?.targetExam || 'Concept'}] --> B(Key Principle 1)\n  A --> C(Key Principle 2)\n  B --> D[Application 1]\n  C --> E[Application 2]`;
+  let defaultQ = `What is the most critical concept to remember about ${user?.academicProfile?.targetExam || 'this topic'}?`;
+  let defaultA = 'Understanding the core foundational principles and how they connect.';
 
   if (targetExam.includes('jee')) {
     defaultTopic = 'Newton\'s Laws of Motion';
@@ -30,6 +31,16 @@ const RevisionSheet = () => {
     defaultSyntax = `graph TD\n  A[French Revolution] --> B(Economic Crisis)\n  A --> C(Social Inequality)\n  B --> E[High Taxes]\n  C --> G[The Three Estates]`;
     defaultQ = 'What were the "Three Estates" in pre-revolutionary France?';
     defaultA = '1st: Clergy, 2nd: Nobility, 3rd: Commoners';
+  } else if (targetExam.includes('neet')) {
+    defaultTopic = 'Photosynthesis';
+    defaultSyntax = `graph TD\n  A[Photosynthesis] --> B(Light Reactions)\n  A --> C(Calvin Cycle)\n  B --> D[ATP & NADPH]\n  C --> E[Glucose]`;
+    defaultQ = 'What are the two main stages of Photosynthesis?';
+    defaultA = 'Light-dependent reactions and the Calvin cycle (light-independent reactions).';
+  } else if (targetExam.includes('ca') || targetExam.includes('chartered')) {
+    defaultTopic = 'Double Entry Accounting';
+    defaultSyntax = `graph TD\n  A[Double Entry System] --> B(Debit)\n  A --> C(Credit)\n  B --> D[Assets & Expenses]\n  C --> E[Liabilities & Income]`;
+    defaultQ = 'What is the fundamental accounting equation?';
+    defaultA = 'Assets = Liabilities + Equity';
   }
 
   const [sheetData, setSheetData] = useState({

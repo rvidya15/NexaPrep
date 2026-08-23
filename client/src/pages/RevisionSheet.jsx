@@ -170,6 +170,60 @@ const RevisionSheet = () => {
           <p className="text-center text-gray-500 mt-4 text-sm">Click the card to flip</p>
         </motion.div>
 
+        {/* Recommended Video Playlist */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white p-6 rounded-xl border border-indigo-200 shadow-xl lg:col-span-2 mt-4"
+        >
+          <h3 className="text-slate-800 font-semibold flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+            Recommended Playlists for {sheetData.topic}
+          </h3>
+          <p className="text-gray-500 text-sm mb-6">Need more conceptual clarity? Watch these curated playlists to master the topic.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a 
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(targetExam + ' ' + sheetData.topic + ' full chapter playlist')}`}
+              target="_blank" rel="noreferrer"
+              className="flex items-center gap-4 p-4 border border-gray-100 rounded-lg hover:border-red-200 hover:bg-red-50 transition group"
+            >
+              <div className="w-24 h-16 bg-gray-200 rounded-md overflow-hidden relative">
+                <img src={`https://source.unsplash.com/300x200/?${encodeURIComponent(sheetData.topic.split(' ')[0] || 'study')}`} alt="Thumbnail" className="w-full h-full object-cover opacity-80" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/10 transition">
+                  <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m10 15 5-3-5-3z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 line-clamp-1">{sheetData.topic}: Complete Concept Breakdown</h4>
+                <p className="text-xs text-gray-500 mt-1">Search YouTube for Top Educators</p>
+              </div>
+            </a>
+
+            <a 
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(targetExam + ' ' + sheetData.topic + ' one shot revision')}`}
+              target="_blank" rel="noreferrer"
+              className="flex items-center gap-4 p-4 border border-gray-100 rounded-lg hover:border-red-200 hover:bg-red-50 transition group"
+            >
+              <div className="w-24 h-16 bg-gray-200 rounded-md overflow-hidden relative">
+                <img src={`https://source.unsplash.com/300x200/?student,learning`} alt="Thumbnail" className="w-full h-full object-cover opacity-80" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/10 transition">
+                  <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m10 15 5-3-5-3z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 line-clamp-1">{sheetData.topic}: One-Shot Revision</h4>
+                <p className="text-xs text-gray-500 mt-1">Quick summary and important PYQs</p>
+              </div>
+            </a>
+          </div>
+        </motion.div>
+
       </div>
     </div>
   );

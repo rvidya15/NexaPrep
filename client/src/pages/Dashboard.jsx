@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Flame, BrainCircuit, Trophy, Target, Sparkles, TrendingUp, BookOpen, Clock } from 'lucide-react';
 import SyllabusExplorer from '../components/dashboard/SyllabusExplorer';
+import StudyHeatmap from '../components/dashboard/StudyHeatmap';
 import { useStudyStore } from '../store/useStudyStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useGamificationStore } from '../store/useGamificationStore';
@@ -157,6 +158,10 @@ const Dashboard = () => {
           </div>
           {/* The visually stunning PW-style Subject Grid */}
           <SyllabusExplorer />
+          
+          <div className="mt-8">
+            <StudyHeatmap />
+          </div>
         </div>
         
         {/* Right Column: AI Recommendations & Activity (Makes dashboard look "complete") */}

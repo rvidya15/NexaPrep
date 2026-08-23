@@ -5,7 +5,7 @@ const { protect } = require('../middleware/auth');
 const { checkAiCredits } = require('../middleware/creditSystem');
 
 // @route POST /api/ai/tutor
-router.post('/tutor', protect, checkAiCredits, async (req, res) => {
+router.post('/tutor', protect, checkAiCredits(1), async (req, res) => {
   try {
     const { query, context } = req.body;
     const response = await handleTutorDoubt(query, context, 'Socratic and encouraging');
@@ -16,7 +16,7 @@ router.post('/tutor', protect, checkAiCredits, async (req, res) => {
 });
 
 // @route POST /api/ai/revision
-router.post('/revision', protect, checkAiCredits, async (req, res) => {
+router.post('/revision', protect, checkAiCredits(3), async (req, res) => {
   try {
     const { topic } = req.body;
     const userLevel = req.user.academicProfile?.targetExam || 'General';
@@ -28,7 +28,7 @@ router.post('/revision', protect, checkAiCredits, async (req, res) => {
 });
 
 // @route POST /api/ai/quiz
-router.post('/quiz', protect, checkAiCredits, async (req, res) => {
+router.post('/quiz', protect, checkAiCredits(1), async (req, res) => {
   try {
     const { topic } = req.body;
     const userLevel = req.user.academicProfile?.targetExam || 'General';
@@ -40,7 +40,7 @@ router.post('/quiz', protect, checkAiCredits, async (req, res) => {
 });
 
 // @route POST /api/ai/pyq
-router.post('/pyq', protect, checkAiCredits, async (req, res) => {
+router.post('/pyq', protect, checkAiCredits(1), async (req, res) => {
   try {
     const { questionText, examMetadata } = req.body;
     const response = await analyzePYQTrend(questionText, examMetadata);
@@ -51,7 +51,7 @@ router.post('/pyq', protect, checkAiCredits, async (req, res) => {
 });
 
 // @route POST /api/ai/topic-info
-router.post('/topic-info', protect, checkAiCredits, async (req, res) => {
+router.post('/topic-info', protect, checkAiCredits(0), async (req, res) => {
   try {
     const { topic } = req.body;
     const userLevel = req.user.academicProfile?.targetExam || 'General';

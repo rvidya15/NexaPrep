@@ -36,5 +36,16 @@ router.post('/create-checkout-session', protect, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// @route POST /api/stripe/mock-purchase
+router.post('/mock-purchase', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.aiTokens += 100; // Add 100 tokens for testing
+    await user.save();
+    res.json({ message: 'Tokens successfully added!', aiTokens: user.aiTokens });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

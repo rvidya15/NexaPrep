@@ -117,10 +117,22 @@ const Dashboard = () => {
               <span className="text-2xl font-bold text-white">{streak || 0}</span>
               <span className="text-xs text-indigo-200 uppercase font-bold tracking-wider">Day Streak</span>
             </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[120px]">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[120px] relative group">
               <BrainCircuit className="w-8 h-8 text-cyan-400 mb-2" />
-              <span className="text-2xl font-bold text-white">{user?.aiTokens || 20}</span>
-              <span className="text-xs text-indigo-200 uppercase font-bold tracking-wider">AI Tokens</span>
+              <span className="text-2xl font-bold text-white">{user?.aiTokens || 0}</span>
+              <span className="text-xs text-indigo-200 uppercase font-bold tracking-wider mb-2">AI Tokens</span>
+              <button 
+                onClick={async () => {
+                  try {
+                    const api = (await import('../api/axiosConfig')).default;
+                    await api.post('/stripe/mock-purchase');
+                    window.location.reload();
+                  } catch(e) { alert('Failed to purchase'); }
+                }}
+                className="bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-bold px-3 py-1 rounded shadow transition"
+              >
+                + Get More
+              </button>
             </div>
             <div className="hidden lg:flex bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-col items-center justify-center min-w-[120px]">
               <Target className="w-8 h-8 text-pink-400 mb-2" />

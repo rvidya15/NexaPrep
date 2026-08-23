@@ -36,6 +36,39 @@ const Dashboard = () => {
   const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
   const dailyQuote = quotes[dayOfYear % quotes.length];
 
+  // Generate dynamic placeholders based on targetExam
+  const targetExam = user?.academicProfile?.targetExam || 'UPSC';
+  
+  let aiPick = { title: "Modern History: Indian National Movement", desc: "Based on your recent tests, you need to review the events between 1905 and 1919." };
+  let scheduled = [
+    { name: "Fundamental Rights", subject: "Polity", due: "Due today", color: "bg-orange-400" },
+    { name: "Earthquake Waves", subject: "Geography", due: "Overdue", color: "bg-red-400" },
+    { name: "Photosynthesis", subject: "Biology", due: "Tomorrow", color: "bg-green-400" }
+  ];
+
+  if (targetExam.toLowerCase().includes('neet')) {
+    aiPick = { title: "Biology: Human Physiology", desc: "You've been struggling with the cardiac cycle. Time for a quick review." };
+    scheduled = [
+      { name: "Thermodynamics", subject: "Physics", due: "Due today", color: "bg-orange-400" },
+      { name: "Organic Chemistry", subject: "Chemistry", due: "Overdue", color: "bg-red-400" },
+      { name: "Cell Biology", subject: "Biology", due: "Tomorrow", color: "bg-green-400" }
+    ];
+  } else if (targetExam.toLowerCase().includes('jee')) {
+    aiPick = { title: "Physics: Rotational Mechanics", desc: "Your torque calculation accuracy is below 50%. Let's fix that." };
+    scheduled = [
+      { name: "Integral Calculus", subject: "Mathematics", due: "Due today", color: "bg-orange-400" },
+      { name: "Electrochemistry", subject: "Chemistry", due: "Overdue", color: "bg-red-400" },
+      { name: "Optics", subject: "Physics", due: "Tomorrow", color: "bg-green-400" }
+    ];
+  } else if (targetExam.toLowerCase().includes('school')) {
+    aiPick = { title: "Mathematics: Algebra", desc: "Review quadratic equations before your upcoming mock test." };
+    scheduled = [
+      { name: "Electricity", subject: "Science", due: "Due today", color: "bg-orange-400" },
+      { name: "Trigonometry", subject: "Mathematics", due: "Overdue", color: "bg-red-400" },
+      { name: "Carbon Compounds", subject: "Science", due: "Tomorrow", color: "bg-green-400" }
+    ];
+  }
+
   return (
     <div className="p-8 bg-[#f8f9fa] min-h-screen">
       
@@ -58,7 +91,7 @@ const Dashboard = () => {
               <p className="text-indigo-100 italic text-sm font-medium">"{dailyQuote}"</p>
             </div>
             <p className="text-indigo-100/80 text-[15px] max-w-xl leading-relaxed">
-              Your target is <strong className="text-white">{user?.academicProfile?.targetExam || 'your ultimate goal'}</strong>. Select a subject below to dive into your personalized AI syllabus and keep your streak alive!
+              Your target is <strong className="text-white">{targetExam}</strong>. Select a subject below to dive into your personalized AI syllabus and keep your streak alive!
             </p>
           </div>
           
@@ -109,8 +142,8 @@ const Dashboard = () => {
                 </h3>
                 <span className="px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold rounded uppercase">High Yield</span>
               </div>
-              <h4 className="text-lg font-bold text-gray-800 mb-2">Modern History: Indian National Movement</h4>
-              <p className="text-sm text-gray-500 mb-4">Based on your recent tests, you need to review the events between 1905 and 1919.</p>
+              <h4 className="text-lg font-bold text-gray-800 mb-2">{aiPick.title}</h4>
+              <p className="text-sm text-gray-500 mb-4">{aiPick.desc}</p>
               <button className="w-full py-2.5 bg-indigo-50 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition">
                 Start Studying
               </button>
@@ -123,27 +156,15 @@ const Dashboard = () => {
               <Clock className="w-5 h-5 text-gray-400" /> Scheduled Revisions
             </h3>
             <div className="space-y-4">
-              <div className="flex items-start gap-3 pb-4 border-b border-gray-50">
-                <div className="w-2 h-2 rounded-full bg-orange-400 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Fundamental Rights</p>
-                  <p className="text-xs text-gray-500">Polity • Due today</p>
+              {scheduled.map((item, idx) => (
+                <div key={idx} className={`flex items-start gap-3 ${idx !== 2 ? 'pb-4 border-b border-gray-50' : ''}`}>
+                  <div className={`w-2 h-2 rounded-full ${item.color} mt-2`}></div>
+                  <div>
+                    <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.subject} • {item.due}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 pb-4 border-b border-gray-50">
-                <div className="w-2 h-2 rounded-full bg-red-400 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Earthquake Waves</p>
-                  <p className="text-xs text-gray-500">Geography • Overdue</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-green-400 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Photosynthesis</p>
-                  <p className="text-xs text-gray-500">Biology • Tomorrow</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 

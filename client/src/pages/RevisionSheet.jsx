@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Repeat, Map, LineChart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import mermaid from 'mermaid';
-
 import api from '../api/axiosConfig';
+import { useAuthStore } from '../store/useAuthStore';
 
 const RevisionSheet = () => {
   const navigate = useNavigate();
@@ -12,16 +12,32 @@ const RevisionSheet = () => {
   const [topicInput, setTopicInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   
+  const user = useAuthStore((state) => state.user);
+  const targetExam = user?.academicProfile?.targetExam?.toLowerCase() || '';
+  
+  let defaultTopic = 'Photosynthesis';
+  let defaultSyntax = `graph TD\n  A[Photosynthesis] --> B(Light Reactions)\n  A --> C(Calvin Cycle)\n  B --> D[ATP & NADPH]\n  C --> E[Glucose]`;
+  let defaultQ = 'What are the two main stages of Photosynthesis?';
+  let defaultA = 'Light-dependent reactions and the Calvin cycle (light-independent reactions).';
+
+  if (targetExam.includes('jee')) {
+    defaultTopic = 'Newton\'s Laws of Motion';
+    defaultSyntax = `graph TD\n  A[Newton's Laws] --> B(First Law: Inertia)\n  A --> C(Second Law: F=ma)\n  A --> D(Third Law: Action/Reaction)`;
+    defaultQ = 'What does Newton\'s Second Law state?';
+    defaultA = 'Force equals mass times acceleration (F=ma).';
+  } else if (targetExam.includes('upsc')) {
+    defaultTopic = 'French Revolution';
+    defaultSyntax = `graph TD\n  A[French Revolution] --> B(Economic Crisis)\n  A --> C(Social Inequality)\n  B --> E[High Taxes]\n  C --> G[The Three Estates]`;
+    defaultQ = 'What were the "Three Estates" in pre-revolutionary France?';
+    defaultA = '1st: Clergy, 2nd: Nobility, 3rd: Commoners';
+  }
+
   const [sheetData, setSheetData] = useState({
-    topic: 'French Revolution',
-    mermaidSyntax: `graph TD
-      A[French Revolution] --> B(Economic Crisis)
-      A --> C(Social Inequality)
-      B --> E[High Taxes]
-      C --> G[The Three Estates]`,
+    topic: defaultTopic,
+    mermaidSyntax: defaultSyntax,
     flashcard: {
-      question: 'What were the "Three Estates" in pre-revolutionary France?',
-      answer: '1st: Clergy, 2nd: Nobility, 3rd: Commoners'
+      question: defaultQ,
+      answer: defaultA
     }
   });
 

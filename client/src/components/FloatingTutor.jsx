@@ -11,28 +11,15 @@ const FloatingTutor = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
-  // Load voices proactively
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
-  }
-
   const speak = (text) => {
-    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    if (!('speechSynthesis' in window)) return;
     if (!text) return;
 
+    window.speechSynthesis.cancel(); // Clear queue
     const cleanText = text.replace(/\[ACTION_ITEM\].*/g, '').replace(/[\*\#]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.0;
     
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Google UK') || v.name.includes('Samantha') || v.name.includes('Zira'));
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
-    }
-    
-    window.speechSynthesis.cancel();
+    // Use default OS voice for maximum compatibility
     window.speechSynthesis.speak(utterance);
   };
 
@@ -111,7 +98,14 @@ const FloatingTutor = () => {
                     {msg.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4  text-indigo-600" />}
                   </div>
                   <div className={`p-3 rounded-2xl shadow-sm max-w-[80%] ${msg.role === 'user' ? ' bg-[#5a4bda] text-white rounded-tr-none' : ' bg-gray-50 border  border-gray-200 rounded-tl-none'}`}>
-                     <p className="whitespace-pre-wrap">{typeof msg.content === 'string' ? msg.content.replace(/\[ACTION_ITEM\].*/g, '') : "No content"}</p>
+                     <div className="flex justify-between items-start gap-2">
+                       <p className="whitespace-pre-wrap">{typeof msg.content === 'string' ? msg.content.replace(/\[ACTION_ITEM\].*/g, '') : "No content"}</p>
+                       {msg.role === 'ai' && (
+                         <button onClick={() => speak(msg.content)} className="text-gray-400 hover:text-indigo-600 transition shrink-0" title="Read Aloud">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                         </button>
+                       )}
+                     </div>
                      
                      {typeof msg.content === 'string' && msg.content.includes('[ACTION_ITEM]') && (
                        <div className="mt-3 p-2  bg-white rounded-lg border border-orange-500/50 flex flex-col gap-1">

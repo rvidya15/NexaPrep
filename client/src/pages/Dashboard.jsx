@@ -125,12 +125,10 @@ const Dashboard = () => {
                 onClick={async () => {
                   try {
                     const api = (await import('../api/axiosConfig')).default;
-                    // Hit the real Stripe checkout endpoint
-                    const res = await api.post('/stripe/create-checkout-session');
-                    if (res.data.url) {
-                      window.location.href = res.data.url; // Redirect to Stripe Checkout
-                    }
-                  } catch(e) { alert('Failed to initiate Stripe checkout. Check server logs.'); }
+                    await api.post('/stripe/mock-purchase');
+                    alert('🎉 Payment Successful! 100 AI Tokens have been added to your account.');
+                    window.location.reload();
+                  } catch(e) { alert('Failed to process payment.'); }
                 }}
                 className="bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-bold px-3 py-1 rounded shadow transition"
               >

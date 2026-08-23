@@ -11,23 +11,41 @@ const FloatingTutor = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
+  // Load voices proactively
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+
   const speak = (text) => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    if (!text) return;
+
     const cleanText = text.replace(/\[ACTION_ITEM\].*/g, '').replace(/[\*\#]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.1;
-    // Try to find a female English voice
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Google UK English Female') || v.name.includes('Samantha'));
-    if (femaleVoice) utterance.voice = femaleVoice;
+    utterance.rate = 1.0;
     
-    window.speechSynthesis.cancel(); // Stop current
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Google UK') || v.name.includes('Samantha') || v.name.includes('Zira'));
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+    
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   };
 
   const handleSend = async () => {
     if(!input.trim()) return;
+
+    // Browser audio unlock: must happen synchronously on user click
+    if (voiceEnabled && 'speechSynthesis' in window) {
+      const unlock = new SpeechSynthesisUtterance('');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    }
+
     const userMsg = input;
     const newMsgs = [...messages, { role: 'user', content: userMsg }];
     setMessages(newMsgs);
@@ -40,11 +58,13 @@ const FloatingTutor = () => {
       
       const reply = res.data.reply;
       setMessages([...newMsgs, { role: 'ai', content: reply }]);
-      speak(reply);
+      
+      // Small delay to ensure React state updates before speaking
+      setTimeout(() => speak(reply), 100);
     } catch (err) {
       const errReply = err.response?.status === 402 ? "You're out of tokens! Please buy more." : "Sorry, I couldn't connect to my neural net. Check your API settings.";
       setMessages([...newMsgs, { role: 'ai', content: errReply }]);
-      speak(errReply);
+      setTimeout(() => speak(errReply), 100);
     } finally {
       setIsLoading(false);
     }

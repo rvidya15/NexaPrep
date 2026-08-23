@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Flame, BrainCircuit, Trophy, Target, Sparkles, TrendingUp, BookOpen, Clock } from 'lucide-react';
 import SyllabusExplorer from '../components/dashboard/SyllabusExplorer';
@@ -7,6 +8,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useGamificationStore } from '../store/useGamificationStore';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { fetchDashboardData, streak } = useStudyStore();
   const user = useAuthStore((state) => state.user);
   const syncWithProfile = useGamificationStore((state) => state.syncWithProfile);
@@ -172,7 +174,10 @@ const Dashboard = () => {
               </div>
               <h4 className="text-lg font-bold text-gray-800 mb-2">{aiPick.title}</h4>
               <p className="text-sm text-gray-500 mb-4">{aiPick.desc}</p>
-              <button className="w-full py-2.5 bg-indigo-50 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition">
+              <button 
+                onClick={() => navigate('/revision', { state: { autoTopic: aiPick.title } })}
+                className="w-full py-2.5 bg-indigo-50 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition"
+              >
                 Start Studying
               </button>
             </div>

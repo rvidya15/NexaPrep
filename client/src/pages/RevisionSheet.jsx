@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Repeat, Map, LineChart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import mermaid from 'mermaid';
 import api from '../api/axiosConfig';
 import { useAuthStore } from '../store/useAuthStore';
 
 const RevisionSheet = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [flipped, setFlipped] = useState(false);
   const [topicInput, setTopicInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  useEffect(() => {
+    if (location.state?.autoTopic) {
+      setTopicInput(location.state.autoTopic);
+    }
+  }, [location.state]);
   
   const user = useAuthStore((state) => state.user);
   const targetExam = user?.academicProfile?.targetExam?.toLowerCase() || '';
